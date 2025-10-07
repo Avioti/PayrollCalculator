@@ -19,7 +19,13 @@ public class PayrollCalculator {
             FileWriter fileWriter = new FileWriter("src/main/resources/" + fileName.trim().replaceAll("\\s", ""), true);
 
             BufferedWriter bufWriter = new BufferedWriter(fileWriter);
-            bufWriter.write("id|name|gross pay\n");
+            if(fileName.contains("json")){
+                bufWriter.write("[\n");
+                bufWriter.write(" \"Id\", \"Name\", \"Gross Pay\",\n");
+            }else{
+                bufWriter.write("Id|Name|Gross Pay\n");
+            }
+
             String input;
             bufReader.readLine();
 
@@ -37,17 +43,29 @@ public class PayrollCalculator {
 
 
                 //saving the file
+                if(fileName.contains("json")){
+                    String jsonFormat = String.format("{\"id\": %d, \"name\": \"%s\", \"gross pay\": %.2f},", employee.getEmployeeId(), employee.getName(), grossPay);
+                   jsonFormat = jsonFormat.replaceAll(", $", "");
+                    bufWriter.write(jsonFormat);
+                    bufWriter.newLine();
+                } else{
+                    bufWriter.write(employee.getEmployeeId() + "|");
+                    bufWriter.write(employee.getName());
+                    bufWriter.write("|");
+                    bufWriter.write(Double.toString(grossPay));
+                    bufWriter.newLine();
+
+                }
 
 
-                bufWriter.write(employee.getEmployeeId() + "|");
-                bufWriter.write(employee.getName());
-                bufWriter.write("|");
-                bufWriter.write(Double.toString(grossPay));
-                bufWriter.newLine();
+
+
 
 
             }
+            bufWriter.write("\n]");
             bufWriter.close();
+
 
             bufReader.close();
 
